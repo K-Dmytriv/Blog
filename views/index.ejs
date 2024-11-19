@@ -1,0 +1,26 @@
+<div class="author">
+  <h1 class="author__heading">Web application</h1>
+  <p class="author__body">Web developer and content creator: <a href="https://instagram.com/_k_dmytriv_" target="_blank">Oksana Dmytriv<a></p>
+</div>
+
+<img src="/img/Photo.jpg" alt="Me" class="hero-image" style="max-height: 100%;">
+
+<section class="articles">
+  <h2 class="articles__heading">Latest Posts</h2>
+
+  <ul class="article-ul">
+    <% data.forEach(post => { %>
+      <li>
+        <a href="/post/<%= post._id %>">
+          <span><%= post.title %></span>
+          <span class="article-list__date"><%= post.createdAt.toDateString() %></span>
+        </a>
+      </li>
+    <% }) %>
+  </ul>
+
+  <% if (nextPage !== null) { %>
+    <a href="/?page=<%= nextPage %>" class="pagination">&lt; View Older Posts</a>
+  <% } %>
+  
+</section>

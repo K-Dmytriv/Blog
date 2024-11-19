@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin</title>
+  <meta name="description" content="Simple Blog created with NodeJs, Express &amp; MongoDb.">
+  <link rel="stylesheet" href="/css/style.css">
+  <script type="text/javascript" defer="" src="/js/script.js.download"></script>
+</head>
+<body>
+  
+  <div class="container">
+    <header class="header">
+  <a href="/" class="header__logo">InstaTweet</a>
+
+  <nav class="header__nav">
+    <ul>
+      <li>
+        <a href="/" class="">Home</a>
+      </li>
+      <li>
+        <a href="/admin" class="">Authorization</a>
+      </li>
+      <li>
+        <a href="/Dashboard" class="">Posts</a>
+      </li>
+    </ul>
+
+  </nav>
+
+  <div class="header__button">
+    <a href="/logout">
+      Logout
+    </a>
+  </div>
+
+</header>
+    <main class="main">
+      <h3>Sign In</h3>
+
+<form action="/admin" method="POST">
+
+  <label for="username"><b>Username</b></label>
+  <input type="text" placeholder="Enter Username" name="username">
+
+  <label for="password"><b>Password</b></label>
+  <input type="password" placeholder="Enter Password" name="password">
+
+  <input type="submit" value="Login" class="btn">
+
+</form>
+
+<div for="username" style="margin-top: 16px; width: 100%; text-align: center;">
+  <b>
+    Wrong username or password!
+  </b>
+</div>
+
+
+<h3>Register</h3>
+<form action="/register" method="POST">
+
+  <label for="username"><b>Username</b></label>
+  <input type="text" placeholder="Enter Username" name="username">
+
+  <label for="password"><b>Password</b></label>
+  <input type="password" placeholder="Enter Password" name="password">
+
+  <input type="submit" value="Register" class="btn">
+
+</form>
+    </main>
+    <footer class="footer">
+  © 2024 Oksana | Builted with NodeJs &amp; MongoDB
+</footer>
+  </div>  
+
+
+<div id="veepn-breach-alert"></div><style>@font-face{font-family:FigtreeVF;src:url(chrome-extension://majdfhpaihoncoakbjgbdhglocklcgno/fonts/FigtreeVF.woff2) format("woff2 supports variations"),url(chrome-extension://majdfhpaihoncoakbjgbdhglocklcgno/fonts/FigtreeVF.woff2) format("woff2-variations");font-weight:100 1000;font-display:swap}</style></body></html>

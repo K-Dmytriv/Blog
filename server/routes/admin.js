@@ -1,0 +1,314 @@
+const express = require('express');
+const router = express.Router();
+const Post = require('../models/Post');
+const User = require('../models/User');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
+const adminLayout = '../views/layouts/admin';
+const jwtSecret = process.env.JWT_SECRET;
+
+
+/**
+ * 
+ * Check Login
+*/
+
+const authMiddleware = (req, res, next) => {
+  const token = req.cookies.token;
+
+  if (!token) {
+    return next(); // Дозволяємо далі, якщо токена немає (користувач не авторизований)
+  }
+
+  try {
+    const decoded = jwt.verify(token, jwtSecret);
+    req.userId = decoded.userId; // Додаємо userId у запит, якщо токен валідний
+    req.isAuthenticated = true; // Позначаємо, що користувач авторизований
+  } catch (error) {
+    req.isAuthenticated = false; // Якщо токен недійсний, користувач не авторизований
+  }
+  return next();
+};
+
+router.get('/admin', authMiddleware, (req, res) => {
+  if (req.isAuthenticated) {
+    return res.redirect('/Alreadyreg.html'); // Якщо авторизований, перенаправляємо
+  }
+  if (!req.isAuthenticated) {
+    return res.render('admin/index', { layout: adminLayout }); // Якщо не авторизований, показуємо форму логіну
+    }
+});
+
+
+/**
+ * GET /
+ * Admin - Login Page
+*/
+router.get('/admin', async (req, res) => {
+  try {
+    const locals = {
+      title: "Admin",
+      description: "Simple Blog created with NodeJs, Express & MongoDb."
+    }
+
+    res.render('admin/index', { locals, layout: adminLayout });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+
+/**
+ * POST /
+ * Admin - Check Login
+*/
+router.post('/admin', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    
+    const user = await User.findOne( { username } );
+
+    if(!user) {
+      res.redirect('/Wrongcreds.html');
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if(!isPasswordValid) {
+      res.redirect('/Wrongcreds.html');
+    }
+
+    const token = jwt.sign({ userId: user._id}, jwtSecret );
+    res.cookie('token', token, { httpOnly: true });
+    res.redirect('/dashboard');
+
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+
+/**
+ * GET /
+ * Admin Dashboard
+*/
+router.get('/dashboard', authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+
+    if (!user) {
+      return res.redirect('/Notreg.html');
+    }
+
+    const locals = {
+      title: 'Dashboard',
+      description: 'Simple Blog created with NodeJs, Express & MongoDb.',
+    };
+
+    const data = await Post.find();
+    res.render('admin/dashboard', {
+      locals,
+      data,
+      username: user.username, // Передаємо ім'я користувача
+      layout: adminLayout,
+    });
+  } catch (error) {
+    console.log(error);
+    res.redirect('/error');
+  }
+});
+
+
+
+/**
+ * GET /
+ * Admin - Create New Post
+*/
+router.get('/add-post', authMiddleware, async (req, res) => {
+  try {
+    const locals = {
+      title: 'Add Post',
+      description: 'Simple Blog created with NodeJs, Express & MongoDb.'
+    }
+
+    const data = await Post.find();
+    res.render('admin/add-post', {
+      locals,
+      layout: adminLayout
+    });
+
+  } catch (error) {
+    console.log(error);
+  }
+
+});
+
+
+/**
+ * POST /
+ * Admin - Create New Post
+*/
+
+/*
+router.post('/add-post', authMiddleware, async (req, res) => {
+  try {
+    try {
+      const newPost = new Post({
+        title: req.body.title,
+        body: req.body.body
+      });
+      await Post.create(newPost);
+      res.redirect('/dashboard');
+    } catch (error) {
+      console.log(error);
+    }
+
+  } catch (error) {
+    console.log(error);
+  }
+});
+*/
+router.post('/add-post', authMiddleware, async (req, res) => {
+  try {
+    // Знайдемо користувача за ID з токена
+    const user = await User.findById(req.userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Формуємо заголовок: додаємо "nickname - " перед title
+    const titleWithNickname = `${user.username} - ${req.body.title}`;
+
+    // Створюємо новий пост з оновленим заголовком
+    const newPost = new Post({
+      title: titleWithNickname,
+      body: req.body.body
+    });
+    await Post.create(newPost);
+    res.redirect('/dashboard');
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+
+/**
+ * GET /
+ * Admin - Create New Post
+*/
+router.get('/edit-post/:id', authMiddleware, async (req, res) => {
+  try {
+
+    const locals = {
+      title: "Edit Post",
+      description: "Free NodeJs User Management System",
+    };
+
+    const data = await Post.findOne({ _id: req.params.id });
+
+    res.render('admin/edit-post', {
+      locals,
+      data,
+      layout: adminLayout
+    })
+
+  } catch (error) {
+    console.log(error);
+  }
+
+});
+
+
+/**
+ * PUT /
+ * Admin - Create New Post
+*/
+router.put('/edit-post/:id', authMiddleware, async (req, res) => {
+  try {
+
+    await Post.findByIdAndUpdate(req.params.id, {
+      title: req.body.title,
+      body: req.body.body,
+      updatedAt: Date.now()
+    });
+
+    res.redirect(`/edit-post/${req.params.id}`);
+
+  } catch (error) {
+    console.log(error);
+  }
+
+});
+
+
+// router.post('/admin', async (req, res) => {
+//   try {
+//     const { username, password } = req.body;
+    
+//     if(req.body.username === 'admin' && req.body.password === 'password') {
+//       res.send('You are logged in.')
+//     } else {
+//       res.send('Wrong username or password');
+//     }
+
+//   } catch (error) {
+//     console.log(error);
+//   }
+// });
+
+
+/**
+ * POST /
+ * Admin - Register
+*/
+router.post('/register', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    try {
+      const user = await User.create({ username, password:hashedPassword });
+      res.redirect('/');
+    } catch (error) {
+      if(error.code === 11000) {
+        res.redirect('/Samename.html');
+      }
+      res.status(500).json({ message: 'Internal server error'})
+    }
+
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+
+/**
+ * DELETE /
+ * Admin - Delete Post
+*/
+router.delete('/delete-post/:id', authMiddleware, async (req, res) => {
+
+  try {
+    await Post.deleteOne( { _id: req.params.id } );
+    res.redirect('/dashboard');
+  } catch (error) {
+    console.log(error);
+  }
+
+});
+
+
+/**
+ * GET /
+ * Admin Logout
+*/
+router.get('/logout', (req, res) => {
+  res.clearCookie('token');
+  //res.json({ message: 'Logout successful.'});
+  res.redirect('/');
+});
+
+
+module.exports = router;
