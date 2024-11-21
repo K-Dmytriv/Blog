@@ -21,8 +21,8 @@ Run this project locally:
 - in OpenServer settings open -> Modules Tab -> Select "Apache 2.4 PHP 8.0-8.1" for HTTP, "PHP 8.0" for PHP, "MongoDB 6.0" for MongoDB
 - Server tab -> "Setting Path variable use" - "Own Path + Win Path"
 - Make sure that "Do not make changes to the HOSTS file" is disabled
-- Click save and right click on red flag icon to open OpenServer menu (near language settings at the bottom) -> Advanced -> Console
-- In console run:
+- Click save -> close OpenServer -> Run as Admin -> right click on red flag icon to open OpenServer menu (near language settings at the bottom) -> Advanced -> Console
+## In console run:
 - cd domains/Blog-main
 - npm install
 - npm run dev
