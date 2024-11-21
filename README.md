@@ -1,6 +1,6 @@
 # NodeJs, Express, EJS & MongoDB Blog
 
-![alt text](https://github.com/K-Dmytriv/Blog/blob/main/Readme.png?raw=true)
+![alt text](https://github.com/K-Dmytriv/Blog/blob/main/Readme2.png?raw=true)
 
 ## We need:
 - NodeJs
