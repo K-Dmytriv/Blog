@@ -1,6 +1,6 @@
 # NodeJs, Express, EJS & MongoDB Blog
 
-![alt text](/readme.png)
+![alt text](https://github.com/K-Dmytriv/Blog/blob/main/Readme.png?raw=true)
 
 ## We need:
 - NodeJs
@@ -27,11 +27,10 @@ Run this project locally:
 -
 - Click save and right click on red flag icon to open OpenServer menu (near language settings at the bottom) -> Advanced -> Console
 -
-- In console run
-
-cd domains/Blog-main
-npm install
-npm run dev
+- In console run:
+- cd domains/Blog-main
+- npm install
+- npm run dev
 
 
 ### Authors
